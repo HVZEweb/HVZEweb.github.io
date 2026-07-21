@@ -37,7 +37,7 @@ function buildTelegramInquiryText(packageKey) {
 }
 
 function openTelegramInquiry(packageKey, newTab = true) {
-    const base = config.telegramUrl || 'https://t.me/HVZEwebDemoBot';
+    const base = config.telegramUrl || 'https://t.me/HVZEweb';
     const text = encodeURIComponent(buildTelegramInquiryText(packageKey));
     const url = `${base}?text=${text}`;
 
@@ -49,10 +49,10 @@ function openTelegramInquiry(packageKey, newTab = true) {
 }
 
 (function initSiteTelegramLinks() {
-    const tgUrl = config.telegramUrl || 'https://t.me/HVZEwebDemoBot';
+    const tgUrl = config.telegramUrl || 'https://t.me/HVZEweb';
     const tgStart = config.telegramStartUrl || tgUrl;
-    const tgPortfolio = config.telegramPortfolioStartUrl || `${tgUrl}?start=portfolio_demo`;
-    const tgHandle = config.telegram || '@HVZEwebDemoBot';
+    const tgPortfolio = config.telegramPortfolioStartUrl || tgUrl;
+    const tgHandle = config.telegram || '@HVZEweb';
 
     [
         ['hero-tg-link', tgStart],
