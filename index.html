@@ -58,7 +58,7 @@
                 </nav>
 
                 <div class="header_actions">
-                    <a href="#contacts" class="header_cta btn btn_primary" data-i18n="nav.consult" data-goal="cta_header">Free consultation</a>
+                    <a href="https://t.me/HVZEwebDemoBot?start=site" id="header-tg-link" class="header_cta btn btn_primary js-tg-inquiry" data-i18n="nav.consult" data-goal="cta_header">Discuss in Telegram</a>
                     <div class="lang_switch" role="group" aria-label="Language">
                         <button type="button" class="lang_switch_btn is-active" data-lang="en">EN</button>
                         <button type="button" class="lang_switch_btn" data-lang="ru">RU</button>
@@ -99,9 +99,9 @@
                     We ship working products — not just pages. AI chatbots, CRM, Telegram bots, booking systems and integrations with OpenAI, Stripe and Google Sheets.
                 </p>
                 <div class="hero_actions reveal">
-                    <a href="#contacts" class="btn btn_primary" data-goal="cta_hero" data-i18n="hero.cta1">Start a project</a>
-                    <a href="#portfolio" class="btn btn_secondary" data-i18n="hero.cta2">View work</a>
-                    <a href="https://t.me/HVZEwebDemoBot?start=site" id="hero-tg-link" class="btn btn_secondary btn_telegram" target="_blank" rel="noopener noreferrer" data-i18n="hero.tgBtn" data-goal="cta_telegram_bot">Try bot in Telegram</a>
+                    <a href="https://t.me/HVZEwebDemoBot?start=site" id="hero-tg-link" class="btn btn_primary btn_telegram js-tg-inquiry" target="_blank" rel="noopener noreferrer" data-i18n="hero.cta1" data-goal="cta_hero">Discuss in Telegram</a>
+                    <a href="#portfolio" class="btn btn_secondary" data-i18n="hero.cta2">View demos</a>
+                    <a href="#pricing" class="btn btn_secondary" data-i18n="hero.cta3">See pricing</a>
                 </div>
                 <ul class="hero_stats reveal">
                     <li class="hero_stat">
@@ -241,7 +241,7 @@
             <div class="container">
                 <p class="section_label reveal" data-i18n="portfolio.label">Product demos</p>
                 <h2 class="section_title reveal" data-i18n="portfolio.title">What we can build for you</h2>
-                <p class="section_description reveal" data-i18n="portfolio.desc">8 interactive demos — AI, CRM, bots and SaaS. No real clients required to show capability.</p>
+                <p class="section_description reveal" data-i18n="portfolio.desc">8 interactive demos — AI, CRM, bots and SaaS. Open any case to see how your product could work.</p>
 
                 <div class="portfolio_filters reveal" role="tablist" aria-label="Filter demos">
                     <button type="button" class="portfolio_filter is-active" data-filter="all" data-i18n="filter.all">All</button>
@@ -408,11 +408,109 @@
             </div>
         </section>
 
+        <section id="pricing" class="section">
+            <div class="container">
+                <p class="section_label reveal" data-i18n="pricing.label">Pricing</p>
+                <h2 class="section_title reveal" data-i18n="pricing.title">Packages</h2>
+                <p class="section_description reveal" data-i18n="pricing.desc">Fixed starting prices. Final quote after a brief.</p>
+
+                <div class="pricing_grid">
+                    <article class="pricing_card pricing_card_featured reveal">
+                        <span class="pricing_badge" data-i18n="pr1.badge">Popular</span>
+                        <h3 class="pricing_name" data-i18n="pr1.name">MVP Start</h3>
+                        <p class="pricing_price" data-i18n="pr1.price">from $130</p>
+                        <p class="pricing_price_sub" data-i18n="pr1.priceSub">≈ 10 000 ₽</p>
+                        <p class="pricing_subtitle" data-i18n="pr1.sub">Launch in 5–7 days</p>
+                        <ul class="pricing_list">
+                            <li data-i18n="pr1.l1">Landing + lead capture</li>
+                            <li data-i18n="pr1.l2">Admin panel for leads</li>
+                            <li data-i18n="pr1.l3">Telegram notifications</li>
+                            <li data-i18n="pr1.l4">Timeline: 5–7 days</li>
+                        </ul>
+                        <div class="pricing_actions">
+                            <a href="portfolio/example-landing.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="pr.example">View demo →</a>
+                            <a href="https://t.me/HVZEwebDemoBot?start=site" class="btn btn_primary btn_full js-tg-inquiry" data-package="mvp" data-goal="pricing_mvp" data-i18n="pr.choose">Discuss in Telegram</a>
+                        </div>
+                    </article>
+                    <article class="pricing_card reveal">
+                        <h3 class="pricing_name" data-i18n="pr2.name">AI Assistant</h3>
+                        <p class="pricing_price" data-i18n="pr2.price">from $490</p>
+                        <p class="pricing_price_sub" data-i18n="pr2.priceSub">≈ 39 000 ₽</p>
+                        <p class="pricing_subtitle" data-i18n="pr2.sub">Sales & support bot</p>
+                        <ul class="pricing_list">
+                            <li data-i18n="pr2.l1">RAG on your documents</li>
+                            <li data-i18n="pr2.l2">Lead qualification</li>
+                            <li data-i18n="pr2.l3">CRM / webhook sync</li>
+                            <li data-i18n="pr2.l4">Timeline: 7–14 days</li>
+                        </ul>
+                        <div class="pricing_actions">
+                            <a href="portfolio/example-ai-sales.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="pr.example">View demo →</a>
+                            <a href="portfolio/example-pdf-chat.html" class="pricing_example pricing_example_secondary" target="_blank" rel="noopener noreferrer" data-i18n="pr.demoPdf">PDF chat →</a>
+                            <a href="https://t.me/HVZEwebDemoBot?start=site" class="btn btn_secondary btn_full js-tg-inquiry" data-package="ai" data-goal="pricing_ai" data-i18n="pr.choose">Discuss in Telegram</a>
+                        </div>
+                    </article>
+                    <article class="pricing_card reveal">
+                        <h3 class="pricing_name" data-i18n="pr3.name">Telegram bot</h3>
+                        <p class="pricing_price" data-i18n="pr3.price">from $190</p>
+                        <p class="pricing_price_sub" data-i18n="pr3.priceSub">≈ 15 000 ₽</p>
+                        <p class="pricing_subtitle" data-i18n="pr3.sub">Leads & support 24/7</p>
+                        <ul class="pricing_list">
+                            <li data-i18n="pr3.l1">Menu + FAQ + booking flow</li>
+                            <li data-i18n="pr3.l2">Manager notifications</li>
+                            <li data-i18n="pr3.l3">Cloudflare Workers · webhook</li>
+                            <li data-i18n="pr3.l4">Timeline: 3–5 days</li>
+                        </ul>
+                        <div class="pricing_actions">
+                            <a href="portfolio/example-telegram-bot.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="case.bot">Bot demo →</a>
+                            <a href="https://t.me/HVZEwebDemoBot?start=site" class="pricing_example pricing_example_secondary js-pricing-tg-link" target="_blank" rel="noopener noreferrer" data-i18n="hero.tgBtn">Try live bot</a>
+                            <a href="https://t.me/HVZEwebDemoBot?start=site" class="btn btn_secondary btn_full js-tg-inquiry" data-package="bot" data-goal="pricing_bot" data-i18n="pr.choose">Discuss in Telegram</a>
+                        </div>
+                    </article>
+                    <article class="pricing_card reveal">
+                        <h3 class="pricing_name" data-i18n="pr4.name">CRM / SaaS</h3>
+                        <p class="pricing_price" data-i18n="pr4.price">from $690</p>
+                        <p class="pricing_price_sub" data-i18n="pr4.priceSub">≈ 55 000 ₽</p>
+                        <p class="pricing_subtitle" data-i18n="pr4.sub">Dashboard for your process</p>
+                        <ul class="pricing_list">
+                            <li data-i18n="pr4.l1">Pipeline, clients, KPI</li>
+                            <li data-i18n="pr4.l2">Orders / inventory</li>
+                            <li data-i18n="pr4.l3">30-day support included</li>
+                            <li data-i18n="pr4.l4">Timeline: 2–3 weeks</li>
+                        </ul>
+                        <div class="pricing_actions">
+                            <div class="pricing_examples">
+                                <a href="portfolio/example-shop-admin.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="case.admin">Admin →</a>
+                                <a href="portfolio/example-shop.html" class="pricing_example pricing_example_secondary" target="_blank" rel="noopener noreferrer" data-i18n="case.shop">Store →</a>
+                            </div>
+                            <a href="https://t.me/HVZEwebDemoBot?start=site" class="btn btn_secondary btn_full js-tg-inquiry" data-package="crm" data-goal="pricing_crm" data-i18n="pr.choose">Discuss in Telegram</a>
+                        </div>
+                    </article>
+                    <article class="pricing_card reveal">
+                        <h3 class="pricing_name" data-i18n="pr5.name">Automation</h3>
+                        <p class="pricing_price" data-i18n="pr5.price">from $390</p>
+                        <p class="pricing_price_sub" data-i18n="pr5.priceSub">≈ 31 000 ₽</p>
+                        <p class="pricing_subtitle" data-i18n="pr5.sub">Booking, docs, workflows</p>
+                        <ul class="pricing_list">
+                            <li data-i18n="pr5.l1">Booking or doc generation</li>
+                            <li data-i18n="pr5.l2">Stripe / Sheets / email</li>
+                            <li data-i18n="pr5.l3">n8n / webhooks ready</li>
+                            <li data-i18n="pr5.l4">Timeline: 5–10 days</li>
+                        </ul>
+                        <div class="pricing_actions">
+                            <a href="portfolio/example-booking.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="pr.demoBooking">Booking →</a>
+                            <a href="portfolio/example-doc-gen.html" class="pricing_example pricing_example_secondary" target="_blank" rel="noopener noreferrer" data-i18n="pr.demoDocs">Doc gen →</a>
+                            <a href="https://t.me/HVZEwebDemoBot?start=site" class="btn btn_secondary btn_full js-tg-inquiry" data-package="automation" data-goal="pricing_automation" data-i18n="pr.choose">Discuss in Telegram</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
         <section id="quiz" class="section section_quiz">
             <div class="container container_narrow">
                 <p class="section_label reveal" data-i18n="quiz.label">Quiz</p>
                 <h2 class="section_title reveal" data-i18n="quiz.title">Which package fits you?</h2>
-                <p class="section_description reveal" data-i18n="quiz.desc">Answer 4 quick questions — we'll suggest a package and pre-fill the form.</p>
+                <p class="section_description reveal" data-i18n="quiz.desc">Answer 4 quick questions — we'll recommend a package and open Telegram with a draft message.</p>
                 <div class="quiz_card reveal" id="quiz-card">
                     <div class="quiz_progress" id="quiz-progress" aria-hidden="true">
                         <span class="is-active"></span><span></span><span></span><span></span>
@@ -425,106 +523,8 @@
                     <div class="quiz_result" id="quiz-result" hidden>
                         <p class="quiz_result_label" data-i18n="quiz.resultLabel">Recommended</p>
                         <p class="quiz_result_package" id="quiz-result-text"></p>
-                        <button type="button" class="btn btn_primary btn_full" id="quiz-to-form" data-i18n="quiz.resultBtn">Request this package</button>
+                        <button type="button" class="btn btn_primary btn_full btn_telegram" id="quiz-to-telegram" data-i18n="quiz.resultBtn">Discuss in Telegram</button>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="pricing" class="section">
-            <div class="container">
-                <p class="section_label reveal" data-i18n="pricing.label">Pricing</p>
-                <h2 class="section_title reveal" data-i18n="pricing.title">Packages</h2>
-                <p class="section_description reveal" data-i18n="pricing.desc">Fixed starting prices. Final quote after a brief.</p>
-
-                <div class="pricing_grid">
-                    <article class="pricing_card reveal">
-                        <h3 class="pricing_name" data-i18n="pr1.name">Business card</h3>
-                        <p class="pricing_price" data-i18n="pr1.price">from $90</p>
-                        <p class="pricing_price_sub" data-i18n="pr1.priceSub">≈ 7 000 ₽</p>
-                        <p class="pricing_subtitle" data-i18n="pr1.sub">Minimum online presence</p>
-                        <ul class="pricing_list">
-                            <li data-i18n="pr1.l1">1 screen + contacts</li>
-                            <li data-i18n="pr1.l2">Mobile responsive</li>
-                            <li data-i18n="pr1.l3">Form or messenger CTA</li>
-                            <li data-i18n="pr1.l4">Timeline: 2–3 days</li>
-                        </ul>
-                        <div class="pricing_actions">
-                            <a href="portfolio/example-vizitka.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="pr.example">View demo →</a>
-                            <a href="#contacts" class="btn btn_secondary btn_full" data-goal="pricing_vizitka" data-package="vizitka" data-i18n="pr.choose">Get started</a>
-                        </div>
-                    </article>
-                    <article class="pricing_card pricing_card_featured reveal">
-                        <span class="pricing_badge" data-i18n="pr2.badge">Popular</span>
-                        <h3 class="pricing_name" data-i18n="pr2.name">Start</h3>
-                        <p class="pricing_price" data-i18n="pr2.price">from $130</p>
-                        <p class="pricing_price_sub" data-i18n="pr2.priceSub">≈ 10 000 ₽</p>
-                        <p class="pricing_subtitle" data-i18n="pr2.sub">Landing for quick launch</p>
-                        <ul class="pricing_list">
-                            <li data-i18n="pr2.l1">1 page, up to 6 blocks</li>
-                            <li data-i18n="pr2.l2">Contact form + Telegram</li>
-                            <li data-i18n="pr2.l3">Basic SEO</li>
-                            <li data-i18n="pr2.l4">Timeline: 5–7 days</li>
-                        </ul>
-                        <div class="pricing_actions">
-                            <a href="portfolio/example-landing.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="pr.example">View demo →</a>
-                            <a href="portfolio/example-telegram-bot.html" class="pricing_example pricing_example_secondary" target="_blank" rel="noopener noreferrer" data-i18n="case.bot">Bot demo →</a>
-                            <a href="#contacts" class="btn btn_primary btn_full" data-goal="pricing_start" data-package="start" data-i18n="pr.choose">Get started</a>
-                        </div>
-                    </article>
-                    <article class="pricing_card reveal">
-                        <h3 class="pricing_name" data-i18n="pr3.name">Business</h3>
-                        <p class="pricing_price" data-i18n="pr3.price">from $350</p>
-                        <p class="pricing_price_sub" data-i18n="pr3.priceSub">≈ 28 000 ₽</p>
-                        <p class="pricing_subtitle" data-i18n="pr3.sub">Company website</p>
-                        <ul class="pricing_list">
-                            <li data-i18n="pr3.l1">Up to 7 pages</li>
-                            <li data-i18n="pr3.l2">Custom design</li>
-                            <li data-i18n="pr3.l3">Analytics integration</li>
-                            <li data-i18n="pr3.l4">Timeline: 10–14 days</li>
-                        </ul>
-                        <div class="pricing_actions">
-                            <a href="portfolio/example-corporate.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="pr.example">View demo →</a>
-                            <a href="portfolio/example-wordpress.html" class="pricing_example pricing_example_secondary" target="_blank" rel="noopener noreferrer" data-i18n="case.wp">WordPress →</a>
-                            <a href="#contacts" class="btn btn_secondary btn_full" data-goal="pricing_business" data-package="business" data-i18n="pr.choose">Get started</a>
-                        </div>
-                    </article>
-                    <article class="pricing_card reveal">
-                        <h3 class="pricing_name" data-i18n="pr4.name">Premium</h3>
-                        <p class="pricing_price" data-i18n="pr4.price">from $690</p>
-                        <p class="pricing_price_sub" data-i18n="pr4.priceSub">≈ 55 000 ₽</p>
-                        <p class="pricing_subtitle" data-i18n="pr4.sub">Store or complex build</p>
-                        <ul class="pricing_list">
-                            <li data-i18n="pr4.l1">E-commerce or CMS</li>
-                            <li data-i18n="pr4.l2">Admin panel</li>
-                            <li data-i18n="pr4.l3">30-day support</li>
-                            <li data-i18n="pr4.l4">Timeline: 3+ weeks</li>
-                        </ul>
-                        <div class="pricing_actions">
-                            <div class="pricing_examples">
-                                <a href="portfolio/example-shop.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="case.shop">Store →</a>
-                                <a href="portfolio/example-shop-admin.html" class="pricing_example pricing_example_secondary" target="_blank" rel="noopener noreferrer" data-i18n="case.admin">Admin →</a>
-                            </div>
-                            <a href="#contacts" class="btn btn_secondary btn_full" data-goal="pricing_premium" data-package="premium" data-i18n="pr.choose">Get started</a>
-                        </div>
-                    </article>
-                    <article class="pricing_card reveal">
-                        <h3 class="pricing_name" data-i18n="pr5.name">Telegram bot</h3>
-                        <p class="pricing_price" data-i18n="pr5.price">from $190</p>
-                        <p class="pricing_price_sub" data-i18n="pr5.priceSub">≈ 15 000 ₽</p>
-                        <p class="pricing_subtitle" data-i18n="pr5.sub">Leads & support 24/7</p>
-                        <ul class="pricing_list">
-                            <li data-i18n="pr5.l1">Menu + FAQ + booking flow</li>
-                            <li data-i18n="pr5.l2">Admin notifications</li>
-                            <li data-i18n="pr5.l3">Webhook / n8n ready</li>
-                            <li data-i18n="pr5.l4">Timeline: 3–5 days</li>
-                        </ul>
-                        <div class="pricing_actions">
-                            <a href="portfolio/example-telegram-bot.html" class="pricing_example" target="_blank" rel="noopener noreferrer" data-i18n="case.bot">Bot demo →</a>
-                            <a href="https://t.me/HVZEwebDemoBot?start=site" class="pricing_example pricing_example_secondary js-pricing-tg-link" target="_blank" rel="noopener noreferrer" data-i18n="hero.tgBtn">Try in Telegram</a>
-                            <a href="#contacts" class="btn btn_secondary btn_full" data-goal="pricing_bot" data-package="bot" data-i18n="pr.choose">Get started</a>
-                        </div>
-                    </article>
                 </div>
             </div>
         </section>
@@ -532,7 +532,7 @@
         <section id="workflow" class="section section_workflow">
             <div class="container">
                 <p class="section_label reveal" data-i18n="workflow.label">Process</p>
-                <h2 class="section_title reveal" data-i18n="workflow.title">From brief to live site</h2>
+                <h2 class="section_title reveal" data-i18n="workflow.title">From brief to live product</h2>
                 <p class="section_description reveal" data-i18n="workflow.desc">Typical project flow — with instant Telegram alerts at every step.</p>
                 <div class="workflow_layout reveal">
                     <div class="workflow_tg">
@@ -555,24 +555,31 @@
             </div>
         </section>
 
-        <section id="reviews" class="section section_reviews">
+        <section id="trust" class="section section_trust">
             <div class="container">
-                <p class="section_label reveal" data-i18n="reviews.label">Reviews</p>
-                <h2 class="section_title reveal" data-i18n="reviews.title">What clients say</h2>
-                <p class="section_description reveal" data-i18n="reviews.desc">Replace with your real Avito / Telegram reviews as they come in.</p>
-                <div class="reviews_grid">
-                    <blockquote class="review_card reveal">
-                        <p class="review_text" data-i18n="reviews.r1.text">Made a landing in 6 days, form goes straight to Telegram. Clear price, no surprises.</p>
-                        <footer><cite data-i18n="reviews.r1.name">Anna K.</cite> · <span data-i18n="reviews.r1.role">Café owner</span></footer>
-                    </blockquote>
-                    <blockquote class="review_card reveal">
-                        <p class="review_text" data-i18n="reviews.r2.text">Corporate site for our construction company — looks solid, clients mention it on calls.</p>
-                        <footer><cite data-i18n="reviews.r2.name">Dmitry V.</cite> · <span data-i18n="reviews.r2.role">B2B</span></footer>
-                    </blockquote>
-                    <blockquote class="review_card reveal">
-                        <p class="review_text" data-i18n="reviews.r3.text">WordPress site + bot for bookings. I edit menu myself, requests ping me instantly.</p>
-                        <footer><cite data-i18n="reviews.r3.name">Elena M.</cite> · <span data-i18n="reviews.r3.role">HoReCa</span></footer>
-                    </blockquote>
+                <p class="section_label reveal" data-i18n="trust.label">Why clients choose us</p>
+                <h2 class="section_title reveal" data-i18n="trust.title">Clear terms from day one</h2>
+                <div class="trust_grid">
+                    <article class="trust_card reveal">
+                        <span class="trust_icon" aria-hidden="true">💬</span>
+                        <h3 class="trust_title" data-i18n="trust.g1.title">Reply within 24 hours</h3>
+                        <p class="trust_text" data-i18n="trust.g1.text">Write in Telegram or email — we respond on business days, usually the same day.</p>
+                    </article>
+                    <article class="trust_card reveal">
+                        <span class="trust_icon" aria-hidden="true">📋</span>
+                        <h3 class="trust_title" data-i18n="trust.g2.title">Fixed price after brief</h3>
+                        <p class="trust_text" data-i18n="trust.g2.text">Starting prices on the site. Final quote after a 15-minute call — no hidden fees.</p>
+                    </article>
+                    <article class="trust_card reveal">
+                        <span class="trust_icon" aria-hidden="true">⚖</span>
+                        <h3 class="trust_title" data-i18n="trust.g3.title">50/50 payment</h3>
+                        <p class="trust_text" data-i18n="trust.g3.text">Half upfront to start, half on delivery. Milestones for larger builds.</p>
+                    </article>
+                    <article class="trust_card reveal">
+                        <span class="trust_icon" aria-hidden="true">✓</span>
+                        <h3 class="trust_title" data-i18n="trust.g4.title">2 revision rounds</h3>
+                        <p class="trust_text" data-i18n="trust.g4.text">Included in every package. CRM and automation — 30 days support after launch.</p>
+                    </article>
                 </div>
             </div>
         </section>
@@ -587,7 +594,7 @@
                     <div class="about_content">
                         <p class="section_label" data-i18n="about.label">About</p>
                         <h2 class="section_title" data-i18n="about.title">HVZEweb studio</h2>
-                        <p class="about_lead" data-i18n="about.lead">We build websites and Telegram automations for startups and small business.</p>
+                        <p class="about_lead" data-i18n="about.lead">We build MVPs, AI tools and automations for startups and SMB — fast, transparent, without agency overhead.</p>
                         <div class="about_points">
                             <div><h3 data-i18n="about.p1.title">How we work</h3><p data-i18n="about.p1.text">One contact person, fixed packages, async updates in Telegram.</p></div>
                             <div><h3 data-i18n="about.p2.title">Stack</h3><p data-i18n="about.p2.text">OpenAI, Telegram Bot API, Stripe, Google Sheets, Cloudflare Workers, n8n.</p></div>
@@ -625,54 +632,29 @@
         </section>
 
         <section id="contacts" class="section section_contacts">
-            <div class="container">
-                <div class="contacts_layout">
-                    <div class="contacts_info">
-                        <p class="section_label reveal" data-i18n="contacts.label">Contact</p>
-                        <h2 class="section_title reveal" data-i18n="contacts.title">Let's work together</h2>
-                        <p class="section_description reveal" data-i18n="contacts.desc">Tell us about your project.</p>
-                        <ul class="contacts_list reveal">
-                            <li class="contacts_item">
-                                <span class="contacts_item_label" data-i18n="contacts.email">Email</span>
-                                <a href="mailto:hvzeweb@mail.ru" class="contacts_item_value">hvzeweb@mail.ru</a>
-                            </li>
-                            <li class="contacts_item">
-                                <span class="contacts_item_label" data-i18n="contacts.tg">Telegram</span>
-                                <a href="https://t.me/HVZEwebDemoBot" id="contacts-tg-link" class="contacts_item_value" target="_blank" rel="noopener noreferrer"><span id="contacts-tg-label">@HVZEwebDemoBot</span></a>
-                            </li>
-                        </ul>
+            <div class="container container_narrow">
+                <div class="contacts_center reveal">
+                    <p class="section_label" data-i18n="contacts.label">Contact</p>
+                    <h2 class="section_title" data-i18n="contacts.title">Let's work together</h2>
+                    <p class="section_description contacts_desc" data-i18n="contacts.desc">Pick the channel that suits you — we reply within one business day.</p>
+                    <div class="contacts_cta_grid">
+                        <a href="https://t.me/HVZEwebDemoBot?start=site" id="contacts-tg-cta" class="contacts_cta contacts_cta_primary js-tg-inquiry" target="_blank" rel="noopener noreferrer" data-goal="cta_contacts_tg">
+                            <span class="contacts_cta_icon" aria-hidden="true">✈</span>
+                            <span class="contacts_cta_body">
+                                <span class="contacts_cta_label" data-i18n="contacts.tgCta">Telegram</span>
+                                <span class="contacts_cta_value" id="contacts-tg-label">@HVZEwebDemoBot</span>
+                                <span class="contacts_cta_hint" data-i18n="contacts.tgHint">Fastest way — usually reply same day</span>
+                            </span>
+                        </a>
+                        <a href="mailto:hvzeweb@mail.ru" class="contacts_cta" data-goal="cta_contacts_email">
+                            <span class="contacts_cta_icon" aria-hidden="true">✉</span>
+                            <span class="contacts_cta_body">
+                                <span class="contacts_cta_label" data-i18n="contacts.email">Email</span>
+                                <span class="contacts_cta_value">hvzeweb@mail.ru</span>
+                                <span class="contacts_cta_hint" data-i18n="contacts.emailHint">For briefs, contracts and files</span>
+                            </span>
+                        </a>
                     </div>
-                    <form class="contact_form reveal" id="contact-form">
-                        <label class="form_field">
-                            <span class="form_label" data-i18n="form.package">Package</span>
-                            <select class="form_input form_select" name="package" id="form-package">
-                                <option value="" data-i18n="form.packageDefault">Not sure yet</option>
-                                <option value="vizitka" data-i18n="form.packageVizitka">Business card</option>
-                                <option value="start" data-i18n="form.packageStart">Start (landing)</option>
-                                <option value="business" data-i18n="form.packageBusiness">Business (corporate)</option>
-                                <option value="premium" data-i18n="form.packagePremium">Premium (store)</option>
-                                <option value="bot" data-i18n="form.packageBot">Telegram bot</option>
-                            </select>
-                        </label>
-                        <label class="form_field">
-                            <span class="form_label" data-i18n="form.name">Name</span>
-                            <input class="form_input" type="text" name="name" data-i18n-placeholder="form.namePh" placeholder="Your name" required autocomplete="name">
-                        </label>
-                        <label class="form_field">
-                            <span class="form_label" data-i18n="form.contact">Email or Telegram</span>
-                            <input class="form_input" type="text" name="contact" data-i18n-placeholder="form.contactPh" placeholder="email@example.com" required autocomplete="email">
-                        </label>
-                        <label class="form_field">
-                            <span class="form_label" data-i18n="form.message">About the project</span>
-                            <textarea class="form_input form_textarea" name="message" rows="4" data-i18n-placeholder="form.messagePh" placeholder="Goal, timeline, budget" required></textarea>
-                        </label>
-                        <label class="form_checkbox">
-                            <input type="checkbox" name="privacy" required>
-                            <span><span data-i18n="form.privacy">I agree to the</span> <a href="privacy.html" target="_blank" data-i18n="form.privacyLink">privacy policy</a></span>
-                        </label>
-                        <button type="submit" class="btn btn_primary btn_full" id="form-submit" data-i18n="form.submit">Send message</button>
-                        <p class="form_note form_note_error" id="form-note-error" hidden></p>
-                    </form>
                 </div>
             </div>
         </section>
@@ -690,28 +672,9 @@
         </div>
     </footer>
 
-    <a href="#contacts" class="floating_cta" data-goal="floating_cta">
-        <span data-i18n="floating">Contact</span>
+    <a href="https://t.me/HVZEwebDemoBot?start=site" id="floating-tg-link" class="floating_cta js-tg-inquiry" target="_blank" rel="noopener noreferrer" data-goal="floating_cta">
+        <span data-i18n="floating">Telegram</span>
     </a>
-
-    <div class="form_modal" id="form-success-modal" hidden aria-hidden="true">
-        <div class="form_modal_overlay" data-modal-close tabindex="-1"></div>
-        <div class="form_modal_dialog" role="dialog" aria-modal="true" aria-labelledby="form-success-title">
-            <button type="button" class="form_modal_close" data-modal-close aria-label="Close">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-            </button>
-            <div class="form_modal_icon" aria-hidden="true">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                    <path d="M8 16.5l5 5 11-11.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <h3 class="form_modal_title" id="form-success-title" data-i18n="form.successTitle">Message sent</h3>
-            <p class="form_modal_text" id="form-success-text" data-i18n="form.successText">Thanks!</p>
-            <button type="button" class="btn btn_primary btn_full" data-modal-close data-i18n="form.successBtn">Great</button>
-        </div>
-    </div>
 
     <script src="js/config.js"></script>
     <script src="js/i18n.js"></script>

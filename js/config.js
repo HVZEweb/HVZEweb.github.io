@@ -5,7 +5,7 @@ window.SITE_CONFIG = {
     telegramUrl: 'https://t.me/HVZEwebDemoBot',
     email: 'hvzeweb@mail.ru',
     yandexMetrikaId: '110092464',
-    defaultLang: 'en',
+    defaultLang: 'ru',
     telegramStartUrl: 'https://t.me/HVZEwebDemoBot?start=site',
     telegramPortfolioStartUrl: 'https://t.me/HVZEwebDemoBot?start=portfolio_demo',
     telegramStudioDemoUrl: 'https://t.me/HVZEwebDemoBot?start=instagram',

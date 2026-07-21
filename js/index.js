@@ -4,12 +4,6 @@ const desktopLinks = document.querySelectorAll('.header_menu_item');
 const mobileLinks = document.querySelectorAll('.mobile_menu_item');
 const allMenuLinks = [...desktopLinks, ...mobileLinks];
 const sections = document.querySelectorAll('section[id]');
-const contactForm = document.getElementById('contact-form');
-const formNoteError = document.getElementById('form-note-error');
-const formSubmitBtn = document.getElementById('form-submit');
-const formSuccessModal = document.getElementById('form-success-modal');
-const formSuccessTitle = document.getElementById('form-success-title');
-const formSuccessText = document.getElementById('form-success-text');
 const revealElements = document.querySelectorAll('.reveal');
 const goalElements = document.querySelectorAll('[data-goal]');
 
@@ -17,6 +11,42 @@ const MENU_ANIMATION_MS = 550;
 const config = window.SITE_CONFIG || {};
 const L = window.HVZE_LANG;
 const t = (key) => L.t(key);
+
+const PACKAGE_RESULT_KEYS = {
+    mvp: 'quiz.result.mvp',
+    ai: 'quiz.result.ai',
+    bot: 'quiz.result.bot',
+    crm: 'quiz.result.crm',
+    automation: 'quiz.result.automation',
+};
+
+function buildTelegramInquiryText(packageKey) {
+    const pkgLine = packageKey && PACKAGE_RESULT_KEYS[packageKey]
+        ? t(PACKAGE_RESULT_KEYS[packageKey])
+        : '';
+
+    if (L.getLang?.() === 'ru') {
+        return pkgLine
+            ? `Здравствуйте! Хочу обсудить проект.\n\nИнтересует: ${pkgLine}\n\nКратко о задаче: `
+            : 'Здравствуйте! Хочу обсудить проект.\n\nКратко о задаче: ';
+    }
+
+    return pkgLine
+        ? `Hi! I would like to discuss a project.\n\nInterested in: ${pkgLine}\n\nBrief: `
+        : 'Hi! I would like to discuss a project.\n\nBrief: ';
+}
+
+function openTelegramInquiry(packageKey, newTab = true) {
+    const base = config.telegramUrl || 'https://t.me/HVZEwebDemoBot';
+    const text = encodeURIComponent(buildTelegramInquiryText(packageKey));
+    const url = `${base}?text=${text}`;
+
+    if (newTab) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+        window.location.href = url;
+    }
+}
 
 (function initSiteTelegramLinks() {
     const tgUrl = config.telegramUrl || 'https://t.me/HVZEwebDemoBot';
@@ -26,7 +56,9 @@ const t = (key) => L.t(key);
 
     [
         ['hero-tg-link', tgStart],
-        ['contacts-tg-link', tgUrl],
+        ['header-tg-link', tgStart],
+        ['floating-tg-link', tgStart],
+        ['contacts-tg-cta', tgStart],
         ['bot-case-tg-link', tgPortfolio],
     ].forEach(([id, href]) => {
         document.getElementById(id)?.setAttribute('href', href);
@@ -37,6 +69,14 @@ const t = (key) => L.t(key);
 
     document.querySelectorAll('.js-pricing-tg-link').forEach((el) => {
         el.setAttribute('href', tgStart);
+    });
+
+    document.querySelectorAll('.js-tg-inquiry').forEach((el) => {
+        el.addEventListener('click', (event) => {
+            event.preventDefault();
+            const pkg = el.getAttribute('data-package') || '';
+            openTelegramInquiry(pkg);
+        });
     });
 })();
 
@@ -157,7 +197,6 @@ if (revealElements.length) {
     revealElements.forEach((el) => revealObserver.observe(el));
 }
 
-
 function trackGoal(goalName) {
     if (typeof ym === 'function' && config.yandexMetrikaId) {
         ym(config.yandexMetrikaId, 'reachGoal', goalName);
@@ -171,180 +210,16 @@ goalElements.forEach((el) => {
     });
 });
 
-function hideFormMessages() {
-    if (formNoteError) formNoteError.hidden = true;
-}
-
-function openSuccessModal(title, message) {
-    if (!formSuccessModal) return;
-
-    if (formSuccessTitle) formSuccessTitle.textContent = title;
-    if (formSuccessText) formSuccessText.textContent = message;
-
-    formSuccessModal.hidden = false;
-    formSuccessModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('form-modal-open');
-
-    requestAnimationFrame(() => {
-        formSuccessModal.classList.add('is-visible');
-    });
-
-    const closeBtn = formSuccessModal.querySelector('[data-modal-close]');
-    closeBtn?.focus();
-}
-
-function closeSuccessModal() {
-    if (!formSuccessModal || formSuccessModal.hidden) return;
-
-    formSuccessModal.classList.remove('is-visible');
-    formSuccessModal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('form-modal-open');
-
-    window.setTimeout(() => {
-        formSuccessModal.hidden = true;
-    }, 300);
-
-    formSubmitBtn?.focus();
-}
-
-if (formSuccessModal) {
-    formSuccessModal.querySelectorAll('[data-modal-close]').forEach((el) => {
-        el.addEventListener('click', closeSuccessModal);
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !formSuccessModal.hidden) {
-            closeSuccessModal();
-        }
-    });
-}
-
-function showFormSuccess(isTelegramFallback = false) {
-    hideFormMessages();
-
-    if (isTelegramFallback) {
-        openSuccessModal(t('form.tgTitle'), t('form.tgText'));
-        return;
-    }
-
-    openSuccessModal(t('form.successTitle'), t('form.successText'));
-}
-
-function showFormError(message) {
-    hideFormMessages();
-    if (formNoteError) {
-        formNoteError.textContent = message;
-        formNoteError.hidden = false;
-    }
-}
-
-function openTelegramFallback(name, contact, message, pkg) {
-    const pkgLine = pkg ? `Пакет: ${pkg}\n` : '';
-    const text = encodeURIComponent(
-        `Заявка с сайта HVZEweb\n\nИмя: ${name}\nКонтакт: ${contact}\n${pkgLine}\n${message}`
-    );
-    const url = config.telegramUrl || 'https://t.me/HVZEwebDemoBot';
-    window.open(`${url}?text=${text}`, '_blank');
-}
-
-async function submitContactForm(formData) {
-    const payload = {
-        name: formData.get('name')?.toString().trim(),
-        contact: formData.get('contact')?.toString().trim(),
-        message: formData.get('message')?.toString().trim(),
-        package: formData.get('package')?.toString().trim() || '',
-    };
-
-    const apiUrl = config.contactApiUrl;
-    if (!apiUrl) {
-        return { ok: false, fallback: true };
-    }
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (response.ok) {
-            return { ok: true };
-        }
-
-        if (response.status === 503) {
-            return { ok: false, fallback: true };
-        }
-
-        return { ok: false, fallback: false };
-    } catch {
-        return { ok: false, fallback: true };
-    }
-}
-
-if (contactForm) {
-    contactForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        hideFormMessages();
-
-        const formData = new FormData(contactForm);
-        const name = formData.get('name')?.toString().trim() || '';
-        const contact = formData.get('contact')?.toString().trim() || '';
-        const message = formData.get('message')?.toString().trim() || '';
-        const pkg = formData.get('package')?.toString().trim() || '';
-
-        if (formSubmitBtn) {
-            formSubmitBtn.disabled = true;
-            formSubmitBtn.textContent = t('form.sending');
-        }
-
-        const result = await submitContactForm(formData);
-
-        if (result.ok) {
-            contactForm.reset();
-            showFormSuccess(false);
-            trackGoal('form_submit');
-        } else if (result.fallback) {
-            openTelegramFallback(name, contact, message, pkg);
-            showFormSuccess(true);
-            contactForm.reset();
-        } else {
-            showFormError(`${t('form.errorGeneric')} ${config.telegram || '@HVZEwebDemoBot'}`);
-        }
-
-        if (formSubmitBtn) {
-            formSubmitBtn.disabled = false;
-            formSubmitBtn.textContent = t('form.submit');
-        }
-    });
-}
-
-const formPackageSelect = document.getElementById('form-package');
-
-function setFormPackage(value) {
-    if (!formPackageSelect || !value) return;
-    formPackageSelect.value = value;
-}
-
-document.querySelectorAll('[data-package]').forEach((el) => {
-    el.addEventListener('click', () => {
-        const pkg = el.getAttribute('data-package');
-        if (pkg) {
-            window.setTimeout(() => setFormPackage(pkg), 350);
-        }
-    });
-});
-
 const QUIZ_STEPS = [
     {
         key: 'need',
         question: 'quiz.q1',
         options: [
-            { value: 'vizitka', label: 'quiz.o1a' },
-            { value: 'start', label: 'quiz.o1b' },
-            { value: 'business', label: 'quiz.o1c' },
-            { value: 'premium', label: 'quiz.o1d' },
-            { value: 'business', label: 'quiz.o1e' },
-            { value: 'bot', label: 'quiz.o1f' },
+            { value: 'mvp', label: 'quiz.o1a' },
+            { value: 'ai', label: 'quiz.o1b' },
+            { value: 'bot', label: 'quiz.o1c' },
+            { value: 'crm', label: 'quiz.o1d' },
+            { value: 'automation', label: 'quiz.o1e' },
         ],
     },
     {
@@ -382,24 +257,24 @@ const quizBackBtn = document.getElementById('quiz-back');
 const quizProgress = document.getElementById('quiz-progress');
 const quizResultEl = document.getElementById('quiz-result');
 const quizResultText = document.getElementById('quiz-result-text');
-const quizToFormBtn = document.getElementById('quiz-to-form');
+const quizToTelegramBtn = document.getElementById('quiz-to-telegram');
 const quizActions = document.querySelector('.quiz_actions');
 
 let quizIndex = 0;
 const quizAnswers = {};
-let quizRecommended = 'start';
+let quizRecommended = 'mvp';
 
 function computeQuizPackage() {
-    let pkg = quizAnswers.need || 'start';
+    let pkg = quizAnswers.need || 'mvp';
 
     if (quizAnswers.budget === 'low') {
-        if (pkg === 'premium' || pkg === 'business') pkg = 'start';
-        if (pkg === 'bot') pkg = 'start';
+        if (pkg === 'crm' || pkg === 'ai') pkg = 'mvp';
+        if (pkg === 'automation') pkg = 'bot';
     }
-    if (quizAnswers.budget === 'mid' && pkg === 'premium') pkg = 'business';
-    if (quizAnswers.budget === 'high' && pkg === 'vizitka') pkg = 'start';
-
-    if (quizAnswers.need === 'bot') pkg = 'bot';
+    if (quizAnswers.budget === 'mid') {
+        if (pkg === 'crm') pkg = 'automation';
+    }
+    if (quizAnswers.budget === 'high' && pkg === 'mvp') pkg = 'ai';
 
     return pkg;
 }
@@ -421,7 +296,7 @@ function renderQuizStep() {
     quizStepEl.innerHTML = `
         <p class="quiz_question">${t(step.question)}</p>
         <div class="quiz_options" role="radiogroup">
-            ${step.options.map((opt, i) => `
+            ${step.options.map((opt) => `
                 <label class="quiz_option${selected === opt.value ? ' is-selected' : ''}">
                     <input type="radio" name="quiz-${step.key}" value="${opt.value}" ${selected === opt.value ? 'checked' : ''}>
                     <span data-quiz-label="${opt.label}">${t(opt.label)}</span>
@@ -485,9 +360,8 @@ if (quizStepEl && quizNextBtn) {
         renderQuizStep();
     });
 
-    quizToFormBtn?.addEventListener('click', () => {
-        setFormPackage(quizRecommended);
-        scrollToSection('#contacts');
+    quizToTelegramBtn?.addEventListener('click', () => {
+        openTelegramInquiry(quizRecommended);
         trackGoal('quiz_submit');
     });
 

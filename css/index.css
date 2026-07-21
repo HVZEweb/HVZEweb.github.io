@@ -1880,38 +1880,137 @@ body.form-modal-open {
     color: var(--text-muted);
 }
 
-/* Reviews */
+/* Reviews → Trust */
 
-.reviews_grid {
+.section_trust {
+    min-height: auto;
+    padding-top: 0;
+}
+
+.trust_grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
-.review_card {
+.trust_card {
     padding: 24px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 12px;
-    margin: 0;
 }
 
-.review_text {
-    font-size: 15px;
+.trust_icon {
+    display: block;
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.trust_title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-bottom: 8px;
+}
+
+.trust_text {
+    font-size: 14px;
+    color: var(--text-muted);
     line-height: 1.55;
-    color: var(--text);
-    margin-bottom: 16px;
 }
 
-.review_card footer {
-    font-size: 13px;
+/* Contacts CTA */
+
+.contacts_center {
+    text-align: center;
+}
+
+.contacts_center .section_description {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contacts_desc {
+    margin-bottom: 40px;
+}
+
+.contacts_cta_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.contacts_cta {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 28px;
+    text-align: left;
+    text-decoration: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contacts_cta:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.contacts_cta_primary {
+    border-color: rgba(42, 171, 238, 0.35);
+}
+
+.contacts_cta_primary:hover {
+    border-color: #2aabee;
+}
+
+.contacts_cta_icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    background: rgba(184, 168, 138, 0.1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.contacts_cta_primary .contacts_cta_icon {
+    background: rgba(42, 171, 238, 0.12);
+    border-color: rgba(42, 171, 238, 0.25);
+}
+
+.contacts_cta_body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.contacts_cta_label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--text-muted);
 }
 
-.review_card cite {
-    font-style: normal;
+.contacts_cta_value {
+    font-size: 18px;
     font-weight: 600;
     color: var(--text-heading);
+}
+
+.contacts_cta_hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.45;
+    margin-top: 4px;
 }
 
 /* About */
@@ -2000,9 +2099,19 @@ body.form-modal-open {
     margin-top: 32px;
 }
 
+@media (max-width: 640px) {
+    .trust_grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 1024px) {
     .why_grid,
-    .reviews_grid {
+    .trust_grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contacts_cta_grid {
         grid-template-columns: 1fr;
     }
 
