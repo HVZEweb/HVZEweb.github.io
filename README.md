@@ -12,7 +12,7 @@
 
 **https://hvzeweb.github.io**
 
-Hosted on **GitHub Pages** (static). Contact form opens Telegram with prefilled message.
+Static site; automatic publishing is disabled for now. Contact form opens Telegram with prefilled message.
 
 ---
 
@@ -21,7 +21,7 @@ Hosted on **GitHub Pages** (static). Contact form opens Telegram with prefilled 
 1. Create repo **`HVZEweb.github.io`** (must match your GitHub username).
 2. Push this project to `main` or `master`.
 3. GitHub → **Settings → Pages → Source**: **GitHub Actions**.
-4. Push triggers `.github/workflows/pages.yml` automatically.
+4. Add a Pages deploy workflow back (it was removed while the site is unpublished).
 5. **Disable/delete** the old Netlify site so only GitHub Pages serves the portfolio.
 
 ```bash
