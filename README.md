@@ -1,80 +1,91 @@
 # HVZEweb
 
-**Product studio** — MVP, AI chatbots, CRM, Telegram bots and business automation for startups and SMB.
+Сайт-портфолио: сайты, Telegram-боты, ИИ-консультанты и автоматизация для малого бизнеса.
+У каждой услуги своя посадочная страница — под отдельную рекламу и отдельную ссылку.
 
-[![Site](https://img.shields.io/badge/Site-hvzeweb.github.io-B8A88A?style=for-the-badge)](https://hvzeweb.github.io)
-[![Telegram](https://img.shields.io/badge/Telegram-@HVZEweb-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/HVZEweb)
-[![Email](https://img.shields.io/badge/Email-hvzeweb%40mail.ru-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:hvzeweb@mail.ru)
+**Сайт:** https://hvzeweb.github.io · **Telegram:** [@HVZEweb](https://t.me/HVZEweb) · **Почта:** hvzeweb@mail.ru
 
----
+## Страницы
 
-## Live site
+| Страница | Адрес | Цена от |
+|---|---|---|
+| Главная | `/` | — |
+| Все услуги | `/uslugi/` | — |
+| Лендинг | `/uslugi/lending/` | 3 000 ₽ |
+| Сайт-визитка | `/uslugi/sajt-vizitka/` | 3 000 ₽ |
+| Сайт компании | `/uslugi/sajt-kompanii/` | 5 000 ₽ |
+| Интернет-магазин | `/uslugi/internet-magazin/` | 15 000 ₽ |
+| Telegram-бот | `/uslugi/telegram-bot/` | 2 000 ₽ |
+| ИИ-консультант | `/uslugi/ii-konsultant/` | 30 000 ₽ |
+| Автоматизация Авито | `/uslugi/avtomatizaciya-avito/` | 10 000 ₽ |
+| Парсеры и интеграции | `/uslugi/parsery-i-integracii/` | 2 000 ₽ |
+| CRM и веб-сервисы | `/uslugi/veb-servisy/` | 10 000 ₽ |
 
-**https://hvzeweb.github.io**
+Демо-проекты лежат в `portfolio/` и открываются из блока «Работы».
 
-Static site; automatic publishing is disabled for now. Contact form opens Telegram with prefilled message.
+## Как менять тексты и цены
 
----
-
-## Deploy (GitHub Pages)
-
-1. Create repo **`HVZEweb.github.io`** (must match your GitHub username).
-2. Push this project to `main` or `master`.
-3. GitHub → **Settings → Pages → Source**: **GitHub Actions**.
-4. Add a Pages deploy workflow back (it was removed while the site is unpublished).
-5. **Disable/delete** the old Netlify site so only GitHub Pages serves the portfolio.
+Все тексты — в одном файле [scripts/site-data.mjs](scripts/site-data.mjs): услуги, цены, пакеты, вопросы, кейсы, демо.
+HTML собирается из него, руками страницы не правим.
 
 ```bash
-git add .
-git commit -m "Deploy portfolio on GitHub Pages"
-git push -u origin main
+node scripts/build-site.mjs
 ```
 
-Optional custom domain: Settings → Pages → Custom domain → add DNS records.
+Цены сайтов и ботов совпадают с прайсом объявлений на Авито (`Avito/server/playbook.json`). Меняете цену там — меняйте и здесь.
 
----
+Новая услуга: добавьте объект в `services` (свой `slug`, `accent`, `icon`, тексты) и пересоберите — появятся страница, пункт меню, карточка, строка в ценах и запись в `sitemap.xml`.
 
-## Product demos
+Дополнительно (нужен Playwright):
 
-| Demo | URL |
-|------|-----|
-| AI Sales Assistant | [/portfolio/example-ai-sales.html](https://hvzeweb.github.io/portfolio/example-ai-sales.html) |
-| CRM Dashboard | [/portfolio/example-shop-admin.html](https://hvzeweb.github.io/portfolio/example-shop-admin.html) |
-| Booking system | [/portfolio/example-booking.html](https://hvzeweb.github.io/portfolio/example-booking.html) |
-| AI PDF Chat | [/portfolio/example-pdf-chat.html](https://hvzeweb.github.io/portfolio/example-pdf-chat.html) |
-| Document generator | [/portfolio/example-doc-gen.html](https://hvzeweb.github.io/portfolio/example-doc-gen.html) |
-| Telegram bot (live) | [/portfolio/example-telegram-bot.html](https://hvzeweb.github.io/portfolio/example-telegram-bot.html) |
-| SaaS MVP landing | [/portfolio/example-landing.html](https://hvzeweb.github.io/portfolio/example-landing.html) |
-| Store + admin | [/portfolio/example-shop.html](https://hvzeweb.github.io/portfolio/example-shop.html) |
+```bash
+node scripts/build-site.mjs --og
+```
 
----
+пересобирает картинки для соцсетей `assets/og/*.png`.
 
-## Stack
+```bash
+node scripts/capture-previews.mjs
+```
 
-HTML · CSS · JavaScript · OpenAI · Telegram Bot API · Cloudflare Workers · GitHub Pages
+переснимает превью демо в `assets/portfolio/previews/`.
 
----
+## Реклама и аналитика
 
-## Config
+Ссылка в рекламу — на страницу услуги, с UTM-метками, например:
 
-| File | Purpose |
-|------|---------|
-| `js/config.js` | Site URL, Telegram, Metrika ID |
-| `js/i18n.js` | EN/RU translations |
+```
+https://hvzeweb.github.io/uslugi/telegram-bot/?utm_source=yandex&utm_medium=cpc&utm_campaign=telegram-bot
+```
 
-Form on static hosting: set `contactApiUrl` in `config.js` if you add a Cloudflare Worker; otherwise Telegram fallback is used.
+Яндекс Метрика (`110092464`) подключена на всех страницах. Цели типа «JavaScript-событие» нужно один раз создать в интерфейсе Метрики:
 
----
+| Цель | Когда срабатывает |
+|---|---|
+| `cta_telegram` | клик по любой кнопке «Обсудить» / Telegram |
+| `cta_email` | клик по почте |
+| `brief_telegram` | отправка брифа в Telegram |
+| `brief_email` | отправка брифа на почту |
 
-## Contact
+У каждой цели есть параметры `page`, `place` (где кнопка) и `service` (какая услуга) — по ним видно, какая реклама приводит обращения.
 
-| Channel | Link |
-|---------|------|
-| Site | [hvzeweb.github.io](https://hvzeweb.github.io) |
-| Telegram | [@HVZEweb](https://t.me/HVZEweb) |
-| Email | [hvzeweb@mail.ru](mailto:hvzeweb@mail.ru) |
-| GitHub | [@HVZEweb](https://github.com/HVZEweb) |
+## Структура
 
----
+| Файл | Что это |
+|---|---|
+| `scripts/site-data.mjs` | весь контент |
+| `scripts/build-site.mjs` | сборка страниц, `sitemap.xml`, OG-картинок |
+| `css/site.css`, `js/site.js` | дизайн и поведение сайта |
+| `portfolio/`, `css/demo-*`, `js/demo-*`, `js/i18n.js` | демо-проекты |
 
-<p align="center"><sub>© 2026 HVZEweb</sub></p>
+## Публикация
+
+GitHub Pages собирает сайт через GitHub Actions. Автопубликация выключена с 25.09.2026: workflow `.github/workflows/pages.yml` удалён, и пуш в `main` сайт не обновляет. Чтобы включить, верните workflow (он есть в истории git, коммит `3ce7992`).
+
+Локально:
+
+```bash
+python -m http.server 8090
+```
+
+и открыть http://localhost:8090.
