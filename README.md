@@ -80,7 +80,7 @@ https://hvzeweb.github.io/uslugi/telegram-bot/?utm_source=yandex&utm_medium=cpc&
 
 ## Публикация
 
-GitHub Pages собирает сайт через GitHub Actions. Автопубликация выключена с 25.09.2026: workflow `.github/workflows/pages.yml` удалён, и пуш в `main` сайт не обновляет. Чтобы включить, верните workflow (он есть в истории git, коммит `3ce7992`).
+GitHub Pages: каждый пуш в `main` публикует сайт через `.github/workflows/pages.yml`. Чтобы остановить публикацию, удалите этот файл; вернуть его можно из истории git.
 
 Локально:
 
