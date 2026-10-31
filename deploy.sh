@@ -26,7 +26,7 @@ git ls-files -z -- index.html 404.html privacy.html robots.txt sitemap.xml '*.tx
     | ssh "$HOST" 'set -e
         rm -rf /var/www/siteprod.new
         mkdir -p /var/www/siteprod.new
-        tar -xzf - -C /var/www/siteprod.new
+        tar --no-same-owner -xzf - -C /var/www/siteprod.new
         chmod -R a+rX /var/www/siteprod.new
         if [ -d /var/www/siteprod ]; then rm -rf /var/www/siteprod.old; mv /var/www/siteprod /var/www/siteprod.old; fi
         mv /var/www/siteprod.new /var/www/siteprod
