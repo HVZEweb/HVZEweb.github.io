@@ -33,7 +33,9 @@ git ls-files -z -- index.html 404.html privacy.html robots.txt sitemap.xml '*.tx
         echo "   файлов: $(find /var/www/siteprod -type f | wc -l)"'
 
 echo "== Caddy"
-RESOLVED=$(ssh "$HOST" "getent ahostsv4 $DOMAIN | awk '{print \$1}' | sort -u | tr '\n' ' '" || true)
+# Спрашиваем напрямую: делегирован ли домен в зоне .ru и что отвечают его DNS-серверы.
+# Кэш резолверов держит «домена нет» до часа, а Let's Encrypt смотрит именно так, без кэша.
+RESOLVED=$(ssh "$HOST" "NS=\$(dig +short NS $DOMAIN @a.dns.ripn.net | head -1); [ -n \"\$NS\" ] && dig +short A $DOMAIN @\$NS | sort -u | tr '\n' ' '" || true)
 if ! echo " $RESOLVED " | grep -q " $SERVER_IP "; then
     echo "   $DOMAIN пока не указывает на $SERVER_IP (сейчас: ${RESOLVED:-нет записи})."
     echo "   Поставьте A-записи siteprod.ru и www → $SERVER_IP в DNS Бегета и запустите скрипт ещё раз."
