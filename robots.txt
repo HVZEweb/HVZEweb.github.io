@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hvzeweb.github.io/sitemap.xml
+# Метки рекламы не создают новых страниц для Яндекса
+User-agent: Yandex
+Allow: /
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&from
+
+Sitemap: https://siteprod.ru/sitemap.xml

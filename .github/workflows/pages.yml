@@ -27,10 +27,24 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      # Основной сайт — siteprod.ru. Когда он отвечает, GitHub Pages только переадресует на него
+      - name: Check siteprod.ru
+        id: main_site
+        run: |
+          if curl -fsS --max-time 20 https://siteprod.ru/ | grep -q 'data-ym='; then
+            echo "live=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "live=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build redirects to siteprod.ru
+        if: steps.main_site.outputs.live == 'true'
+        run: node scripts/build-redirects.mjs
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: ${{ steps.main_site.outputs.live == 'true' && '_redirect' || '.' }}
 
       - name: Deploy
         id: deployment

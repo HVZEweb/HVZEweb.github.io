@@ -1,14 +1,26 @@
-// Собирает статические страницы сайта из scripts/site-data.mjs:
-//   index.html, uslugi/index.html, uslugi/<slug>/index.html, sitemap.xml
+// Собирает статические страницы сайта из scripts/site-data.mjs и scripts/articles.mjs:
+//   index.html, uslugi/, uslugi/<slug>/, blog/, blog/<slug>/, privacy.html, 404.html, robots.txt, sitemap.xml
 // Запуск: node scripts/build-site.mjs
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { site, niches, groups, services, cases, demos, guarantees, homeFaq } from './site-data.mjs';
+import { articles } from './articles.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const NB = '\u00A0';
 const HOME_ACCENT = '#CFF24A';
+
+// Версия файла в адресе: браузер кэширует css/js надолго и сразу берёт новый после правки
+const ver = (rel) => createHash('md5').update(readFileSync(path.join(ROOT, rel))).digest('hex').slice(0, 8);
+const CSS_VER = ver('css/site.css');
+const JS_VER = ver('js/site.js');
+const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const humanDate = (iso) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${d} ${MONTHS[m - 1]} ${y}`;
+};
 
 const svcBySlug = Object.fromEntries(services.map((s) => [s.slug, s]));
 const itemById = Object.fromEntries([...cases, ...demos].map((x) => [x.id, x]));
@@ -50,7 +62,21 @@ const icon = (name, cls = 'ic') =>
 
 const ldJson = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
 
-const provider = { '@type': 'ProfessionalService', name: site.brand, url: `${site.url}/`, email: site.email, areaServed: 'RU' };
+// Ссылки в тексте статей: [текст](uslugi/slug/) — путь от корня сайта
+const rich = (text, root) => esc(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, href) => `<a href="${root}${href}">${t}</a>`);
+
+const provider = {
+    '@type': 'ProfessionalService',
+    '@id': `${site.url}/#org`,
+    name: site.brand,
+    url: `${site.url}/`,
+    email: site.email,
+    logo: `${site.url}/assets/icon-512.png`,
+    image: `${site.url}/assets/og/home.png`,
+    areaServed: { '@type': 'Country', name: 'Россия' },
+    sameAs: [`https://t.me/${site.telegram}`],
+    contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: site.email, url: `https://t.me/${site.telegram}`, availableLanguage: 'ru' },
+};
 
 const faqLd = (items) => ({
     '@context': 'https://schema.org',
@@ -60,8 +86,12 @@ const faqLd = (items) => ({
 
 /* ---------- Каркас страницы ---------- */
 
-function layout({ root, urlPath, title, description, accent, og, jsonld = [], body, bodyClass = '' }) {
+function layout({ root, urlPath, title, description, accent, og, jsonld = [], body, bodyClass = '', ogType = 'website', noindex = false }) {
     const canonical = `${site.url}/${urlPath}`;
+    const verify = [
+        site.yandexVerification && `<meta name="yandex-verification" content="${escAttr(site.yandexVerification)}">`,
+        site.googleVerification && `<meta name="google-site-verification" content="${escAttr(site.googleVerification)}">`,
+    ].filter(Boolean);
     return `<!DOCTYPE html>
 <html lang="ru" data-ym="${site.metrikaId}">
 <head>
@@ -69,9 +99,10 @@ function layout({ root, urlPath, title, description, accent, og, jsonld = [], bo
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escAttr(title)}</title>
 <meta name="description" content="${escAttr(description)}">
-<link rel="canonical" href="${canonical}">
+${noindex ? '<meta name="robots" content="noindex, follow">' : `<link rel="canonical" href="${canonical}">`}
+${verify.join('\n')}
 <meta name="theme-color" content="#0E0E0D">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${ogType}">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:site_name" content="${site.brand}">
 <meta property="og:url" content="${canonical}">
@@ -82,10 +113,11 @@ function layout({ root, urlPath, title, description, accent, og, jsonld = [], bo
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="${root}assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="${root}css/site.css">
+<link rel="icon" href="${root}assets/icon-120.png" sizes="120x120" type="image/png">
+<link rel="apple-touch-icon" href="${root}assets/apple-touch-icon.png">
+<link rel="preload" href="${root}fonts/unbounded-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${root}fonts/manrope-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="${root}css/site.css?v=${CSS_VER}">
 <script>document.documentElement.classList.add('js')</script>
 ${jsonld.map(ldJson).join('\n')}
 </head>
@@ -96,7 +128,7 @@ ${header(root)}
 ${body}
 </main>
 ${footer(root)}
-<script src="${root}js/site.js" defer></script>
+<script src="${root}js/site.js?v=${JS_VER}" defer></script>
 </body>
 </html>
 `;
@@ -133,6 +165,7 @@ function header(root) {
             </div>
             <a class="nav__a" href="${root}#portfolio">Работы</a>
             <a class="nav__a" href="${root}#ceny">Цены</a>
+            <a class="nav__a" href="${root}blog/">Статьи</a>
             <a class="nav__a" href="${root}#faq">Вопросы</a>
         </nav>
         <a class="btn btn--accent btn--sm hdr__cta" href="${tgUrl(GENERAL_TEXT)}" target="_blank" rel="noopener" data-goal="cta_telegram" data-place="header">Обсудить проект</a>
@@ -145,6 +178,7 @@ function header(root) {
             <div class="mnav__links">
                 <a href="${root}#portfolio">Работы</a>
                 <a href="${root}#ceny">Цены</a>
+                <a href="${root}blog/">Статьи</a>
                 <a href="${root}#faq">Вопросы</a>
                 <a href="${root}#contacts">Контакты</a>
             </div>
@@ -178,6 +212,10 @@ function footer(root) {
                 </div>
             </div>
             ${cols}
+            <div class="ftr__col">
+                <p class="ftr__title"><a href="${root}blog/">Статьи</a></p>
+                ${articles.map((a) => `<a href="${root}blog/${a.slug}/">${esc(a.title)}</a>`).join('')}
+            </div>
         </div>
         <div class="ftr__bottom">
             <span>© 2026 ${site.brand}</span>
@@ -251,6 +289,16 @@ function demoCard(d, root) {
             <span><span class="demo__kind">${esc(d.kind)}</span><span class="demo__title">${esc(d.title)}</span></span>
             <span class="demo__go">${icon('arrowUp')}</span>
         </span>
+    </a>`;
+}
+
+function articleCard(a, root) {
+    const svc = svcBySlug[a.services[0]];
+    return `<a class="acard rv" href="${root}blog/${a.slug}/" style="--c:${svc.accent}">
+        <span class="acard__meta"><span class="acard__ic">${icon(svc.icon)}</span>${a.minutes} мин чтения</span>
+        <span class="acard__title">${esc(a.title)}</span>
+        <span class="acard__text">${esc(a.description)}</span>
+        <span class="acard__go">Читать ${icon('arrow')}</span>
     </a>`;
 }
 
@@ -430,7 +478,7 @@ function homePage() {
     <div class="wrap hero__in">
         <div class="hero__copy">
             <p class="eyebrow rv"><span class="pulse"></span>Принимаю новые проекты</p>
-            <h1 class="h1 rv">Сайты, боты и&nbsp;ИИ, которые приносят <em>заявки</em></h1>
+            <h1 class="h1 rv">Сайты и Telegram-боты для бизнеса, которые приносят <em>заявки</em></h1>
             <p class="lead rv">Делаю под ключ для малого бизнеса: от лендинга за 3 дня до ИИ-консультанта, который отвечает клиентам ночью. Заявки сразу приходят вам в Telegram.</p>
             <div class="hero__cta rv">
                 <a class="btn btn--accent btn--lg" href="${tgUrl(GENERAL_TEXT)}" target="_blank" rel="noopener" data-goal="cta_telegram" data-place="hero">${icon('send')} Обсудить проект</a>
@@ -512,14 +560,21 @@ function homePage() {
     </div>
 </section>`;
 
-    const faqSec = `<section class="sec" id="faq">
+    const faqSec = `<section class="sec sec--paper2" id="faq">
     <div class="wrap wrap--narrow">
-        ${secHead('05 — Вопросы', 'Частые вопросы')}
+        ${secHead('06 — Вопросы', 'Частые вопросы')}
         ${faqList(homeFaq)}
     </div>
 </section>`;
 
-    const body = [hero, servicesSec, workSec, processSec, priceSec, faqSec, contactSection(root)].join('\n');
+    const blogSec = `<section class="sec" id="blog">
+    <div class="wrap">
+        ${secHead('05 — Статьи', 'Полезно перед заказом', 'Разбираю частые вопросы клиентов: сколько стоит, что выбрать и как не потерять деньги.')}
+        <div class="acards">${articles.map((a) => articleCard(a, root)).join('')}</div>
+    </div>
+</section>`;
+
+    const body = [hero, servicesSec, workSec, processSec, priceSec, blogSec, faqSec, contactSection(root)].join('\n');
 
     const jsonld = [
         {
@@ -539,13 +594,22 @@ function homePage() {
             },
         },
         faqLd(homeFaq),
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            '@id': `${site.url}/#site`,
+            url: `${site.url}/`,
+            name: site.brand,
+            inLanguage: 'ru',
+            publisher: { '@id': `${site.url}/#org` },
+        },
     ];
 
     return layout({
         root,
         urlPath: '',
-        title: 'HVZEweb — сайты, Telegram-боты и ИИ для бизнеса под ключ',
-        description: 'Сайты от 3 000 ₽, Telegram-боты от 2 000 ₽, ИИ-консультанты и автоматизация Авито для малого бизнеса. Смета бесплатно, оплата 50/50, правки до приёмки.',
+        title: 'Создание сайтов и Telegram-ботов для бизнеса под ключ — HVZEweb',
+        description: 'Разработка сайтов от 3 000 ₽ и Telegram-ботов от 2 000 ₽, ИИ-консультанты и автоматизация Авито для малого бизнеса. Смета бесплатно, оплата 50/50, правки до приёмки.',
         accent: HOME_ACCENT,
         og: 'home',
         jsonld,
@@ -601,6 +665,7 @@ function servicePage(s) {
     const group = groups.find((g) => g.id === s.group);
     const tg = tgUrl(svcText(s));
     const others = services.filter((o) => o.slug !== s.slug);
+    const related = articles.filter((a) => a.services.includes(s.slug));
 
     const pkgCards = s.packages
         .map((p) => {
@@ -702,6 +767,13 @@ function servicePage(s) {
 
 ${contactSection(root, s)}
 
+${related.length ? `<section class="sec sec--tight sec--paper2">
+    <div class="wrap">
+        <div class="sub-head rv"><h3 class="h3">Полезно почитать</h3></div>
+        <div class="acards">${related.map((a) => articleCard(a, root)).join('')}</div>
+    </div>
+</section>` : ''}
+
 <section class="sec sec--tight">
     <div class="wrap">
         <div class="sub-head rv"><h3 class="h3">Другие услуги</h3></div>
@@ -799,10 +871,191 @@ function privacyPage() {
     });
 }
 
+function articleBody(a, root) {
+    return a.body
+        .map((b) => {
+            if (b.h2) return `<h2>${esc(b.h2)}</h2>`;
+            if (b.p) return `<p>${rich(b.p, root)}</p>`;
+            if (b.ul) return `<ul>${b.ul.map((li) => `<li>${rich(li, root)}</li>`).join('')}</ul>`;
+            if (b.table) {
+                const head = b.table.head.map((h) => `<th scope="col">${esc(h)}</th>`).join('');
+                const rows = b.table.rows.map((r) => `<tr>${r.map((c, i) => (i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`)).join('')}</tr>`).join('');
+                return `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+            }
+            throw new Error(`Неизвестный блок в статье ${a.slug}`);
+        })
+        .join('\n');
+}
+
+function articlePage(a) {
+    const root = '../../';
+    const main = svcBySlug[a.services[0]];
+    const others = articles.filter((o) => o.slug !== a.slug);
+    const body = `<section class="hero hero--sub">
+    <div class="hero__bg" aria-hidden="true"><div class="hero__glow"></div><div class="hero__grid"></div></div>
+    <div class="wrap wrap--narrow">
+        <nav class="crumbs rv" aria-label="Навигация"><a href="${root}">Главная</a><span>/</span><a href="${root}blog/">Статьи</a><span>/</span><span>${esc(a.title)}</span></nav>
+        <h1 class="h1 h1--article rv">${esc(a.title)}</h1>
+        <p class="lead rv">${esc(a.lead)}</p>
+        <p class="article-meta rv"><time datetime="${a.date}">${humanDate(a.date)}</time><span>·</span>${a.minutes} мин чтения</p>
+    </div>
+</section>
+<section class="sec sec--article">
+    <div class="wrap wrap--narrow">
+        <article class="prose">
+${articleBody(a, root)}
+        </article>
+        <aside class="cta-box rv">
+            <span class="cta-box__ic">${icon(main.icon)}</span>
+            <div>
+                <p class="cta-box__title">${esc(main.name)} — ${price(main.from)}</p>
+                <p class="cta-box__text">${esc(main.short)}. Смета бесплатно, отвечу в течение дня.</p>
+            </div>
+            <div class="cta-box__btns">
+                <a class="btn btn--accent" href="${tgUrl(svcText(main))}" target="_blank" rel="noopener" data-goal="cta_telegram" data-place="article" data-service="${main.slug}">${icon('send')} Обсудить</a>
+                <a class="btn btn--ghost" href="${root}uslugi/${main.slug}/">Подробнее об услуге</a>
+            </div>
+        </aside>
+    </div>
+</section>
+<section class="sec sec--paper2" id="faq">
+    <div class="wrap wrap--narrow">
+        ${secHead('Вопросы', 'Коротко о главном')}
+        ${faqList(a.faq)}
+    </div>
+</section>
+${contactSection(root, main)}
+<section class="sec sec--tight">
+    <div class="wrap">
+        <div class="sub-head rv"><h3 class="h3">Другие статьи</h3></div>
+        <div class="acards">${others.map((o) => articleCard(o, root)).join('')}</div>
+    </div>
+</section>`;
+    const url = `${site.url}/blog/${a.slug}/`;
+    return layout({
+        root,
+        urlPath: `blog/${a.slug}/`,
+        title: a.metaTitle,
+        description: a.description,
+        accent: main.accent,
+        og: `blog-${a.slug}`,
+        ogType: 'article',
+        jsonld: [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BlogPosting',
+                headline: a.title,
+                description: a.description,
+                datePublished: a.date,
+                dateModified: a.updated || a.date,
+                inLanguage: 'ru',
+                mainEntityOfPage: url,
+                image: `${site.url}/assets/og/blog-${a.slug}.png`,
+                author: { '@id': `${site.url}/#org`, '@type': 'Organization', name: site.brand, url: `${site.url}/` },
+                publisher: { '@id': `${site.url}/#org`, '@type': 'Organization', name: site.brand, logo: { '@type': 'ImageObject', url: `${site.url}/assets/icon-512.png` } },
+            },
+            faqLd(a.faq),
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Главная', item: `${site.url}/` },
+                    { '@type': 'ListItem', position: 2, name: 'Статьи', item: `${site.url}/blog/` },
+                    { '@type': 'ListItem', position: 3, name: a.title, item: url },
+                ],
+            },
+        ],
+        body,
+        bodyClass: 'page-article',
+    });
+}
+
+function blogIndexPage() {
+    const root = '../';
+    const body = `<section class="hero hero--sub">
+    <div class="hero__bg" aria-hidden="true"><div class="hero__glow"></div><div class="hero__grid"></div></div>
+    <div class="wrap">
+        <nav class="crumbs rv" aria-label="Навигация"><a href="${root}">Главная</a><span>/</span><span>Статьи</span></nav>
+        <h1 class="h1 h1--sub rv">Статьи</h1>
+        <p class="lead rv">Про сайты, Telegram-ботов, ИИ и Авито — простым языком и на реальных примерах. Чтобы перед заказом вы понимали, что и за сколько покупаете.</p>
+    </div>
+</section>
+<section class="sec">
+    <div class="wrap"><div class="acards">${articles.map((a) => articleCard(a, root)).join('')}</div></div>
+</section>
+${contactSection(root)}`;
+    return layout({
+        root,
+        urlPath: 'blog/',
+        title: 'Статьи о сайтах, Telegram-ботах и автоматизации — HVZEweb',
+        description: 'Сколько стоит Telegram-бот, что выбрать — лендинг или визитку, как автоматизировать Авито без блокировки. Разборы на реальных проектах.',
+        accent: HOME_ACCENT,
+        og: 'home',
+        jsonld: [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Главная', item: `${site.url}/` },
+                    { '@type': 'ListItem', position: 2, name: 'Статьи', item: `${site.url}/blog/` },
+                ],
+            },
+        ],
+        body,
+        bodyClass: 'page-blog',
+    });
+}
+
+// Ссылки на 404 абсолютные от корня: страница отдаётся по любому неверному адресу
+function notFoundPage() {
+    const root = '/';
+    const body = `<section class="hero hero--sub hero--404">
+    <div class="hero__bg" aria-hidden="true"><div class="hero__glow"></div><div class="hero__grid"></div></div>
+    <div class="wrap">
+        <p class="eyebrow rv">Ошибка 404</p>
+        <h1 class="h1 h1--sub rv">Такой страницы нет</h1>
+        <p class="lead rv">Возможно, адрес изменился. Начните с главной или выберите услугу.</p>
+        <div class="hero__cta rv">
+            <a class="btn btn--accent btn--lg" href="/">На главную</a>
+            <a class="btn btn--ghost btn--lg" href="/uslugi/">Все услуги</a>
+        </div>
+    </div>
+</section>
+<section class="sec">
+    <div class="wrap">${servicesByGroup(root)}</div>
+</section>`;
+    return layout({
+        root,
+        urlPath: '404.html',
+        title: 'Страница не найдена — HVZEweb',
+        description: 'Такой страницы нет. Перейдите на главную или выберите услугу.',
+        accent: HOME_ACCENT,
+        og: 'home',
+        body,
+        bodyClass: 'page-404',
+        noindex: true,
+    });
+}
+
+function robotsTxt() {
+    return `User-agent: *
+Allow: /
+
+# Метки рекламы не создают новых страниц для Яндекса
+User-agent: Yandex
+Allow: /
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&from
+
+Sitemap: ${site.url}/sitemap.xml
+`;
+}
+
 function sitemap() {
     const urls = [
         ['', '1.0', 'weekly'],
         ['uslugi/', '0.9', 'weekly'],
+        ['blog/', '0.7', 'weekly'],
+        ...articles.map((a) => [`blog/${a.slug}/`, '0.7', 'monthly', a.updated || a.date]),
         ...services.map((s) => [`uslugi/${s.slug}/`, '0.9', 'monthly']),
         ...demos.filter((d) => !/^https?:/.test(d.href)).map((d) => [d.href, '0.5', 'monthly']),
         ['privacy.html', '0.2', 'yearly'],
@@ -810,7 +1063,7 @@ function sitemap() {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
-    .map(([p, prio, freq]) => `  <url>\n    <loc>${site.url}/${p}</loc>\n    <lastmod>${site.updated}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${prio}</priority>\n  </url>`)
+    .map(([p, prio, freq, mod]) => `  <url>\n    <loc>${site.url}/${p}</loc>\n    <lastmod>${mod || site.updated}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${prio}</priority>\n  </url>`)
     .join('\n')}
 </urlset>
 `;
@@ -827,7 +1080,11 @@ console.log('Сборка сайта:');
 write('index.html', homePage());
 write('uslugi/index.html', servicesIndexPage());
 for (const s of services) write(`uslugi/${s.slug}/index.html`, servicePage(s));
+write('blog/index.html', blogIndexPage());
+for (const a of articles) write(`blog/${a.slug}/index.html`, articlePage(a));
 write('privacy.html', privacyPage());
+write('404.html', notFoundPage());
+write('robots.txt', robotsTxt());
 write('sitemap.xml', sitemap());
 
 /* ---------- Картинки для соцсетей: node scripts/build-site.mjs --og (нужен playwright) ---------- */
@@ -868,6 +1125,10 @@ if (process.argv.includes('--og')) {
             ogHtml({ accent: s.accent, iconName: s.icon, kicker: groups.find((g) => g.id === s.group).title, title: s.name, sub: s.short, chips: [price(s.from), esc(s.days)] }),
         ]),
     ];
+    for (const a of articles) {
+        const svc = svcBySlug[a.services[0]];
+        jobs.push([`blog-${a.slug}`, ogHtml({ accent: svc.accent, iconName: svc.icon, kicker: 'Статья', title: a.title, sub: `${a.minutes} мин чтения · ${svc.name}`, chips: [] })]);
+    }
     mkdirSync(path.join(ROOT, 'assets', 'og'), { recursive: true });
     for (const [name, html] of jobs) {
         await page.setContent(html, { waitUntil: 'networkidle' });

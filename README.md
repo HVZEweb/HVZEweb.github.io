@@ -3,7 +3,7 @@
 Сайт-портфолио: сайты, Telegram-боты, ИИ-консультанты и автоматизация для малого бизнеса.
 У каждой услуги своя посадочная страница — под отдельную рекламу и отдельную ссылку.
 
-**Сайт:** https://hvzeweb.github.io · **Telegram:** [@HVZEweb](https://t.me/HVZEweb) · **Почта:** hvzeweb@mail.ru
+**Сайт:** https://siteprod.ru · **Telegram:** [@HVZEweb](https://t.me/HVZEweb) · **Почта:** hvzeweb@mail.ru
 
 ## Страницы
 
@@ -20,12 +20,13 @@
 | Автоматизация Авито | `/uslugi/avtomatizaciya-avito/` | 10 000 ₽ |
 | Парсеры и интеграции | `/uslugi/parsery-i-integracii/` | 2 000 ₽ |
 | CRM и веб-сервисы | `/uslugi/veb-servisy/` | 10 000 ₽ |
+| Статьи | `/blog/` | — |
 
 Демо-проекты лежат в `portfolio/` и открываются из блока «Работы».
 
 ## Как менять тексты и цены
 
-Все тексты — в одном файле [scripts/site-data.mjs](scripts/site-data.mjs): услуги, цены, пакеты, вопросы, кейсы, демо.
+Все тексты — в [scripts/site-data.mjs](scripts/site-data.mjs) (услуги, цены, пакеты, вопросы, кейсы, демо) и [scripts/articles.mjs](scripts/articles.mjs) (статьи).
 HTML собирается из него, руками страницы не правим.
 
 ```bash
@@ -55,7 +56,7 @@ node scripts/capture-previews.mjs
 Ссылка в рекламу — на страницу услуги, с UTM-метками, например:
 
 ```
-https://hvzeweb.github.io/uslugi/telegram-bot/?utm_source=yandex&utm_medium=cpc&utm_campaign=telegram-bot
+https://siteprod.ru/uslugi/telegram-bot/?utm_source=yandex&utm_medium=cpc&utm_campaign=telegram-bot
 ```
 
 Яндекс Метрика (`110092464`) подключена на всех страницах. Цели типа «JavaScript-событие» нужно один раз создать в интерфейсе Метрики:
@@ -78,9 +79,24 @@ https://hvzeweb.github.io/uslugi/telegram-bot/?utm_source=yandex&utm_medium=cpc&
 | `css/site.css`, `js/site.js` | дизайн и поведение сайта |
 | `portfolio/`, `css/demo-*`, `js/demo-*`, `js/i18n.js` | демо-проекты |
 
+## SEO
+
+- Коды подтверждения Яндекс Вебмастера и Google Search Console вставляются в `site` в `scripts/site-data.mjs` (`yandexVerification`, `googleVerification`), потом сборка и выкладка.
+- `robots.txt`, `sitemap.xml`, `404.html` генерируются сборкой. В `robots.txt` есть Clean-param для UTM-меток.
+- Файл `<ключ>.txt` в корне — ключ IndexNow: после выкладки `deploy.sh` сообщает Яндексу адреса из sitemap.
+- Шрифты Unbounded и Manrope лежат в `fonts/` (лицензия OFL), Google Fonts не используется.
+
 ## Публикация
 
-GitHub Pages: каждый пуш в `main` публикует сайт через `.github/workflows/pages.yml`. Чтобы остановить публикацию, удалите этот файл; вернуть его можно из истории git.
+Основной сайт — **siteprod.ru** на сервере `crypto-vps` (общий Caddy, свой блок `# >>> siteprod`, файлы в `/var/www/siteprod`).
+
+```bash
+bash deploy.sh
+```
+
+Скрипт собирает страницы, заливает закоммиченные файлы на сервер, а когда `siteprod.ru` указывает на сервер (A-записи `siteprod.ru` и `www` → `83.222.16.56`), ставит блок Caddy из `deploy/siteprod.caddy` с бэкапом и проверкой, включает HTTPS и шлёт адреса в IndexNow.
+
+GitHub Pages (`hvzeweb.github.io`) публикуется при каждом пуше в `main`. Пока siteprod.ru не отвечает, там полная копия сайта; как только отвечает — только переадресации на siteprod.ru (`scripts/build-redirects.mjs`), чтобы в поиске не было дублей.
 
 Локально:
 

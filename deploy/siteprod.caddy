@@ -1,0 +1,38 @@
+# >>> siteprod (сайт HVZEweb на siteprod.ru, деплой: C:\xampp\htdocs\portfolio\deploy.sh) >>>
+www.siteprod.ru {
+	redir https://siteprod.ru{uri} 301
+}
+
+siteprod.ru {
+	root * /var/www/siteprod
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options SAMEORIGIN
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	# У каждой страницы один адрес: /uslugi/lending/index.html → /uslugi/lending/
+	@index path_regexp index ^(.*/)index\.html$
+	redir @index {re.index.1} 301
+
+	# Шрифты, стили, скрипты и картинки кэшируем (css и js подключены с ?v=хеш), страницы — всегда свежие
+	@static path /fonts/* /css/* /js/* /assets/*
+	header @static Cache-Control "public, max-age=2592000"
+	@pages not path /fonts/* /css/* /js/* /assets/*
+	header @pages Cache-Control "no-cache"
+	@woff2 path *.woff2
+	header @woff2 Content-Type "font/woff2"
+
+	file_server
+
+	handle_errors 404 {
+		rewrite * /404.html
+		file_server
+	}
+}
+# <<< siteprod <<<
